@@ -29,32 +29,32 @@ void drawStats() {
   DrawText(TextFormat("Velocity: %f", velocity), 10, 75, 25, BLACK);
 }
 
-void newDrawBall(Ball &ball, Vector2 &initialPosition) {
+void newDrawBall(std::vector<Ball>& balls) {
+  for (Ball &ball : balls) {
+    DrawCircleV(ball.position, 25, MAROON);
+    // change in velocity is delta v (dv)
+    // how much faster will the ball go after it has fallen dt, time for 1 frame
+    // add that to the current velocity
+    float dt = GetFrameTime();
+    float dv = acceleration * dt;
+    ball.velocity += dv;
 
-  DrawText(TextFormat("Position: %f", ball.position.y), 10, 45, 25, BLACK);
-  DrawCircleV(ball.position, 25, MAROON);
-  // change in velocity is delta v (dv)
-  // how much faster will the ball go after it has fallen dt, time for 1 frame
-  // add that to the current velocity
-  float dt = GetFrameTime();
-  float dv = acceleration * dt;
-  ball.velocity += dv;
+    // add the change in position to the current position of the ball
+    ball.position.y += ball.velocity * dt;
 
-  // add the change in position to the current position of the ball
-  ball.position.y += ball.velocity * dt;
+    // ball hit the floor
+    if (ball.position.y > 475) {
+      // keep it at the floor or it will sink through
+      ball.position.y = 475;
+      // negate velocity so it bounces upward and take off some speed
+      ball.velocity = ball.velocity * -0.8;
+    }
 
-  // ball hit the floor
-  if (ball.position.y > 475) {
-    // keep it at the floor or it will sink through
-    ball.position.y = 475;
-    // negate velocity so it bounces upward and take off some speed
-    ball.velocity = ball.velocity * -0.8;
-  }
-
-  // if ball is on the floor and barely bouncing, set motion to zero
-  if (std::abs(ball.velocity) < 3.0 && ball.position.y == 475) {
-    ball.velocity = 0;
-    acceleration = 0;
+    // if ball is on the floor and barely bouncing, set motion to zero
+    if (std::abs(ball.velocity) < 3.0 && ball.position.y == 475) {
+      ball.velocity = 0;
+      acceleration = 0;
+    }
   }
 }
 
@@ -97,10 +97,12 @@ int main(void) {
   newBall.position = initialPosition;
   newBall.radius = 25;
   newBall.velocity = 0.0f;
+  std::vector<Ball> balls = {};
+  balls.push_back(newBall);
   while (!WindowShouldClose()) {
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    newDrawBall(newBall, initialPosition);
+    newDrawBall(balls);
     EndDrawing();
   }
 
