@@ -29,18 +29,44 @@ void drawStats() {
   DrawText(TextFormat("Velocity: %f", velocity), 10, 75, 25, BLACK);
 }
 
+void newDrawBall(Ball &ball, Vector2 &initialPosition) {
+
+  DrawText(TextFormat("Position: %f", ball.position.y), 10, 45, 25, BLACK);
+  DrawCircleV(ball.position, 25, MAROON);
+  // change in velocity is delta v (dv)
+  // how much faster will the ball go after it has fallen dt, time for 1 frame
+  // add that to the current velocity
+  float dt = GetFrameTime();
+  float dv = acceleration * dt;
+  ball.velocity += dv;
+
+  // add the change in position to the current position of the ball
+  ball.position.y += ball.velocity * dt;
+
+  // ball hit the floor
+  if (ball.position.y > 475) {
+    // keep it at the floor or it will sink through
+    ball.position.y = 475;
+    // negate velocity so it bounces upward and take off some speed
+    ball.velocity = ball.velocity * -0.8;
+  }
+
+  // if ball is on the floor and barely bouncing, set motion to zero
+  if (std::abs(ball.velocity) < 3.0 && ball.position.y == 475) {
+    ball.velocity = 0;
+    acceleration = 0;
+  }
+}
+
 void drawBall() {
 
-  float dv = 0.0;
-  Vector2 initialPosition = {(float)screenWidth / 2, (float)screenHeight / 10};
-  Ball NewBall = Ball();
   DrawText(TextFormat("Position: %f", ballPosition.y), 10, 45, 25, BLACK);
   DrawCircleV(ballPosition, 25, MAROON);
   // change in velocity is delta v (dv)
   // how much faster will the ball go after it has fallen dt, time for 1 frame
   // add that to the current velocity
   float dt = GetFrameTime();
-  dv = acceleration * dt;
+  float dv = acceleration * dt;
   velocity += dv;
 
   // add the change in position to the current position of the ball
@@ -66,11 +92,15 @@ int main(void) {
   InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys");
   SetTargetFPS(60);
 
+  Vector2 initialPosition = {(float)screenWidth / 2, (float)screenHeight / 10};
+  Ball newBall = Ball();
+  newBall.position = initialPosition;
+  newBall.radius = 25;
+  newBall.velocity = 0.0f;
   while (!WindowShouldClose()) {
     BeginDrawing();
     ClearBackground(RAYWHITE);
-    drawStats();
-    drawBall();
+    newDrawBall(newBall, initialPosition);
     EndDrawing();
   }
 
