@@ -32,11 +32,13 @@ void drawStats() {
 void drawBall() {
 
   float dv = 0.0;
+  Vector2 initialPosition = {(float)screenWidth / 2, (float)screenHeight / 10};
+  Ball NewBall = Ball();
   DrawText(TextFormat("Position: %f", ballPosition.y), 10, 45, 25, BLACK);
   DrawCircleV(ballPosition, 25, MAROON);
   // change in velocity is delta v (dv)
   // how much faster will the ball go after it has fallen dt, time for 1 frame
-  // to pass? add that to the current velocity
+  // add that to the current velocity
   float dt = GetFrameTime();
   dv = acceleration * dt;
   velocity += dv;
@@ -66,7 +68,6 @@ int main(void) {
 
   while (!WindowShouldClose()) {
     BeginDrawing();
-
     ClearBackground(RAYWHITE);
     drawStats();
     drawBall();
