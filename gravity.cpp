@@ -16,6 +16,7 @@ Vector2 ballPosition = {(float)screenWidth / 2, (float)screenHeight / 10};
 
 struct Ball {
   Vector2 position;
+  float acceleration;
   float radius;
   float velocity;
 };
@@ -25,8 +26,6 @@ struct Ball {
  */
 void drawStats() {
   DrawFPS(10, 10);
-  // DrawText(TextFormat("Position: %f", ballPosition), 10, 45, 25, BLACK);
-  DrawText(TextFormat("Velocity: %f", velocity), 10, 75, 25, BLACK);
 }
 
 void newDrawBall(std::vector<Ball> &balls) {
@@ -53,7 +52,7 @@ void newDrawBall(std::vector<Ball> &balls) {
     // if ball is on the floor and barely bouncing, set motion to zero
     if (std::abs(ball.velocity) < 3.0 && ball.position.y == 475) {
       ball.velocity = 0;
-      acceleration = 0;
+      ball.acceleration = 0;
     }
   }
 }
@@ -94,12 +93,7 @@ int main(void) {
 
   Vector2 initialPosition = {(float)screenWidth / 2, (float)screenHeight / 10};
   Vector2 mousePosition;
-  Ball newBall = Ball();
-  newBall.position = initialPosition;
-  newBall.radius = 25;
-  newBall.velocity = 0.0f;
   std::vector<Ball> balls = {};
-  balls.push_back(newBall);
   while (!WindowShouldClose()) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       mousePosition = GetMousePosition();
@@ -107,10 +101,12 @@ int main(void) {
       newBall.position = mousePosition;
       newBall.radius = 25;
       newBall.velocity = 0.0f;
+      newBall.acceleration = acceleration;
       balls.push_back(newBall);
     }
     BeginDrawing();
     ClearBackground(RAYWHITE);
+    DrawFPS(10, 10);
     DrawText(TextFormat("Mouse Position - X: %f, Y: %f", mousePosition.x,
                         mousePosition.y),
              10, 50, 20, GOLD);
