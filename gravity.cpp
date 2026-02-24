@@ -2,6 +2,8 @@
 #include <cmath>
 #include <vector>
 
+// Make bigger to increase rate of acceleration (more gravity)
+const float gravityFactor = 0.0f;
 const int screenWidth = 1000;
 const int screenHeight = 500;
 
@@ -68,7 +70,7 @@ int main(void) {
        * By setting acceleration = screenHeight, and using d = 1/2*a*t^2
        * the ball will fall halfway down from the top in 1s. makes it feel real
        */
-      newBall.acceleration = (float)screenHeight;
+      newBall.acceleration = (float)screenHeight + gravityFactor;
       balls.push_back(newBall);
     }
     BeginDrawing();
