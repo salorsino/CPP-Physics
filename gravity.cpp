@@ -29,7 +29,7 @@ void drawStats() {
   DrawText(TextFormat("Velocity: %f", velocity), 10, 75, 25, BLACK);
 }
 
-void newDrawBall(std::vector<Ball>& balls) {
+void newDrawBall(std::vector<Ball> &balls) {
   for (Ball &ball : balls) {
     DrawCircleV(ball.position, 25, MAROON);
     // change in velocity is delta v (dv)
@@ -93,6 +93,7 @@ int main(void) {
   SetTargetFPS(60);
 
   Vector2 initialPosition = {(float)screenWidth / 2, (float)screenHeight / 10};
+  Vector2 mousePosition;
   Ball newBall = Ball();
   newBall.position = initialPosition;
   newBall.radius = 25;
@@ -100,8 +101,19 @@ int main(void) {
   std::vector<Ball> balls = {};
   balls.push_back(newBall);
   while (!WindowShouldClose()) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+      mousePosition = GetMousePosition();
+      Ball newBall = Ball();
+      newBall.position = mousePosition;
+      newBall.radius = 25;
+      newBall.velocity = 0.0f;
+      balls.push_back(newBall);
+    }
     BeginDrawing();
     ClearBackground(RAYWHITE);
+    DrawText(TextFormat("Mouse Position - X: %f, Y: %f", mousePosition.x,
+                        mousePosition.y),
+             10, 50, 20, GOLD);
     newDrawBall(balls);
     EndDrawing();
   }
